@@ -1,12 +1,35 @@
 import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
-  AlertCircle,
-  CheckCircle,
+  CheckCircle2,
   Trash2,
   Edit2,
   Plus,
   LogOut,
+  Sparkles,
+  Target,
+  TrendingUp,
+  AlertCircle,
 } from "lucide-react";
+import { Button } from "./components/ui/button";
+import { Input } from "./components/ui/input";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "./components/ui/card";
+import { Badge } from "./components/ui/badge";
+import { Separator } from "./components/ui/separator";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "./components/ui/dialog";
 
 const API_BASE = "/api";
 
@@ -99,89 +122,7 @@ const API = {
     return data;
   },
 };
-// const API = {
-//   async register(email, password) {
-//     await new Promise((r) => setTimeout(r, 500));
-//     const users = JSON.parse(localStorage.getItem("users") || "[]");
-//     if (users.find((u) => u.email === email)) {
-//       throw new Error("Email already exists");
-//     }
-//     const user = { id: Date.now(), email, password };
-//     users.push(user);
-//     localStorage.setItem("users", JSON.stringify(users));
-//     return user;
-//   },
 
-//   async login(email, password) {
-//     await new Promise((r) => setTimeout(r, 500));
-//     const users = JSON.parse(localStorage.getItem("users") || "[]");
-//     const user = users.find(
-//       (u) => u.email === email && u.password === password
-//     );
-//     if (!user) throw new Error("Invalid credentials");
-//     localStorage.setItem("currentUser", JSON.stringify(user));
-//     return user;
-//   },
-
-//   async logout() {
-//     localStorage.removeItem("currentUser");
-//   },
-
-//   async getCurrentUser() {
-//     const user = localStorage.getItem("currentUser");
-//     return user ? JSON.parse(user) : null;
-//   },
-
-//   async getTodos() {
-//     const user = await this.getCurrentUser();
-//     if (!user) throw new Error("Not authenticated");
-//     const todos = JSON.parse(localStorage.getItem(`todos_${user.id}`) || "[]");
-//     return todos;
-//   },
-
-//   async addTodo(title) {
-//     const user = await this.getCurrentUser();
-//     if (!user) throw new Error("Not authenticated");
-//     const todos = await this.getTodos();
-//     const newTodo = {
-//       id: Date.now(),
-//       user_id: user.id,
-//       title,
-//       is_done: false,
-//       created_at: new Date().toISOString(),
-//     };
-//     todos.push(newTodo);
-//     localStorage.setItem(`todos_${user.id}`, JSON.stringify(todos));
-//     return newTodo;
-//   },
-
-//   async updateTodo(id, title, isDone) {
-//     const user = await this.getCurrentUser();
-//     if (!user) throw new Error("Not authenticated");
-//     const todos = await this.getTodos();
-//     const index = todos.findIndex((t) => t.id === id);
-//     if (index === -1) throw new Error("Todo not found");
-//     todos[index] = {
-//       ...todos[index],
-//       title,
-//       is_done: isDone,
-//       updated_at: new Date().toISOString(),
-//     };
-//     localStorage.setItem(`todos_${user.id}`, JSON.stringify(todos));
-//     return todos[index];
-//   },
-
-//   async deleteTodo(id) {
-//     const user = await this.getCurrentUser();
-//     if (!user) throw new Error("Not authenticated");
-//     const todos = await this.getTodos();
-//     const filtered = todos.filter((t) => t.id !== id);
-//     localStorage.setItem(`todos_${user.id}`, JSON.stringify(filtered));
-//     return true;
-//   },
-// };
-
-// Auth Context
 const AuthContext = React.createContext(null);
 
 function AuthProvider({ children }) {
@@ -217,7 +158,7 @@ function AuthProvider({ children }) {
   );
 }
 
-// Login Page
+// Login Page with Animations
 function LoginPage({ onSwitchToRegister }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -238,64 +179,88 @@ function LoginPage({ onSwitchToRegister }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
-        <h1 className="text-3xl font-bold text-gray-800 mb-2">TaskTitan9000</h1>
-        <p className="text-gray-600 mb-6">Welcome back! Log in to continue.</p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <Card className="w-full max-w-md shadow-2xl">
+          <CardHeader className="space-y-1 text-center">
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+              className="mx-auto mb-4 w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center"
+            >
+              <Sparkles className="w-8 h-8 text-white" />
+            </motion.div>
+            <CardTitle className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              TaskTitan9000
+            </CardTitle>
+            <CardDescription>
+              Welcome back! Ready to conquer your tasks?
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <AnimatePresence>
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-center gap-2"
+                >
+                  <AlertCircle className="w-5 h-5 flex-shrink-0" />
+                  <span className="text-sm">{error}</span>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4 flex items-center">
-            <AlertCircle className="w-5 h-5 mr-2" />
-            {error}
-          </div>
-        )}
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Email</label>
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                onKeyPress={(e) => e.key === "Enter" && handleSubmit()}
+                placeholder="your@email.com"
+                className="transition-all focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
 
-        <div className="space-y-4">
-          <div>
-            <label className="block text-gray-700 text-sm font-medium mb-2">
-              Email
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && handleSubmit()}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Password</label>
+              <Input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onKeyPress={(e) => e.key === "Enter" && handleSubmit()}
+                placeholder="••••••••"
+                className="transition-all focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
 
-          <div>
-            <label className="block text-gray-700 text-sm font-medium mb-2">
-              Password
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && handleSubmit()}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
+            <Button
+              onClick={handleSubmit}
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transition-all"
+            >
+              {loading ? "Signing in..." : "Sign In"}
+            </Button>
 
-          <button
-            onClick={handleSubmit}
-            disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition disabled:opacity-50"
-          >
-            {loading ? "Logging in..." : "Log In"}
-          </button>
-        </div>
-
-        <p className="mt-4 text-center text-gray-600">
-          Don't have an account?{" "}
-          <button
-            onClick={onSwitchToRegister}
-            className="text-blue-600 hover:underline font-medium"
-          >
-            Register
-          </button>
-        </p>
-      </div>
+            <p className="text-center text-sm text-gray-600">
+              Don't have an account?{" "}
+              <button
+                onClick={onSwitchToRegister}
+                className="text-blue-600 hover:text-blue-700 font-medium hover:underline"
+              >
+                Register here
+              </button>
+            </p>
+          </CardContent>
+        </Card>
+      </motion.div>
     </div>
   );
 }
@@ -333,79 +298,93 @@ function RegisterPage({ onSwitchToLogin }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
-        <h1 className="text-3xl font-bold text-gray-800 mb-2">
-          Create Account
-        </h1>
-        <p className="text-gray-600 mb-6">Join TaskTitan9000 today!</p>
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50 flex items-center justify-center p-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <Card className="w-full max-w-md shadow-2xl">
+          <CardHeader className="space-y-1 text-center">
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+              className="mx-auto mb-4 w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center"
+            >
+              <Target className="w-8 h-8 text-white" />
+            </motion.div>
+            <CardTitle className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+              Join TaskTitan9000
+            </CardTitle>
+            <CardDescription>Start crushing your goals today!</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <AnimatePresence>
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-center gap-2"
+                >
+                  <AlertCircle className="w-5 h-5 flex-shrink-0" />
+                  <span className="text-sm">{error}</span>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4 flex items-center">
-            <AlertCircle className="w-5 h-5 mr-2" />
-            {error}
-          </div>
-        )}
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Email</label>
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="your@email.com"
+              />
+            </div>
 
-        <div className="space-y-4">
-          <div>
-            <label className="block text-gray-700 text-sm font-medium mb-2">
-              Email
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && handleSubmit()}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-            />
-          </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Password</label>
+              <Input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+              />
+            </div>
 
-          <div>
-            <label className="block text-gray-700 text-sm font-medium mb-2">
-              Password
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && handleSubmit()}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-            />
-          </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Confirm Password</label>
+              <Input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                onKeyPress={(e) => e.key === "Enter" && handleSubmit()}
+                placeholder="••••••••"
+              />
+            </div>
 
-          <div>
-            <label className="block text-gray-700 text-sm font-medium mb-2">
-              Confirm Password
-            </label>
-            <input
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && handleSubmit()}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-            />
-          </div>
+            <Button
+              onClick={handleSubmit}
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+            >
+              {loading ? "Creating Account..." : "Create Account"}
+            </Button>
 
-          <button
-            onClick={handleSubmit}
-            disabled={loading}
-            className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition disabled:opacity-50"
-          >
-            {loading ? "Creating Account..." : "Register"}
-          </button>
-        </div>
-
-        <p className="mt-4 text-center text-gray-600">
-          Already have an account?{" "}
-          <button
-            onClick={onSwitchToLogin}
-            className="text-purple-600 hover:underline font-medium"
-          >
-            Log In
-          </button>
-        </p>
-      </div>
+            <p className="text-center text-sm text-gray-600">
+              Already have an account?{" "}
+              <button
+                onClick={onSwitchToLogin}
+                className="text-purple-600 hover:text-purple-700 font-medium hover:underline"
+              >
+                Sign in
+              </button>
+            </p>
+          </CardContent>
+        </Card>
+      </motion.div>
     </div>
   );
 }
@@ -419,6 +398,7 @@ function Dashboard() {
   const [editingId, setEditingId] = useState(null);
   const [editTitle, setEditTitle] = useState("");
   const [loading, setLoading] = useState(true);
+  const [deleteDialog, setDeleteDialog] = useState({ open: false, id: null });
 
   useEffect(() => {
     loadTodos();
@@ -462,10 +442,17 @@ function Dashboard() {
     }
   };
 
-  const handleDelete = async (id) => {
+  const confirmDelete = (id) => {
+    setDeleteDialog({ open: true, id });
+  };
+
+  const handleDelete = async () => {
     try {
-      await API.deleteTodo(id);
-      setTodos((prevTodos) => prevTodos.filter((t) => t.id !== id));
+      await API.deleteTodo(deleteDialog.id);
+      setTodos((prevTodos) =>
+        prevTodos.filter((t) => t.id !== deleteDialog.id)
+      );
+      setDeleteDialog({ open: false, id: null });
     } catch (err) {
       alert(err.message);
     }
@@ -504,177 +491,317 @@ function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <nav className="bg-white shadow-sm border-b">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-800">TaskTitan9000</h1>
-            <p className="text-sm text-gray-600">{user?.email}</p>
-          </div>
-          <button
-            onClick={logout}
-            className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition"
-          >
-            <LogOut className="w-4 h-4" />
-            Logout
-          </button>
-        </div>
-      </nav>
-
-      <div className="max-w-4xl mx-auto p-4 mt-6">
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <div className="grid grid-cols-3 gap-4 mb-6">
-            <div className="bg-blue-50 rounded-lg p-4 text-center">
-              <div className="text-3xl font-bold text-blue-600">
-                {stats.total}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+      {/* Navbar */}
+      <motion.nav
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        className="bg-white shadow-sm border-b sticky top-0 z-10 backdrop-blur-sm bg-white/95"
+      >
+        <div className="max-w-6xl mx-auto px-4 py-4">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-3">
+              <motion.div
+                whileHover={{ rotate: 360 }}
+                transition={{ duration: 0.5 }}
+                className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center"
+              >
+                <Sparkles className="w-6 h-6 text-white" />
+              </motion.div>
+              <div>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  TaskTitan9000
+                </h1>
+                <p className="text-sm text-gray-600">{user?.email}</p>
               </div>
-              <div className="text-sm text-gray-600">Total Tasks</div>
             </div>
-            <div className="bg-green-50 rounded-lg p-4 text-center">
-              <div className="text-3xl font-bold text-green-600">
-                {stats.done}
-              </div>
-              <div className="text-sm text-gray-600">Completed</div>
-            </div>
-            <div className="bg-orange-50 rounded-lg p-4 text-center">
-              <div className="text-3xl font-bold text-orange-600">
-                {stats.active}
-              </div>
-              <div className="text-sm text-gray-600">Active</div>
-            </div>
-          </div>
-
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={newTodo}
-              onChange={(e) => setNewTodo(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && handleAddTodo()}
-              placeholder="What needs to be done?"
-              className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-            <button
-              onClick={handleAddTodo}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium flex items-center gap-2 transition"
+            <Button
+              onClick={logout}
+              variant="outline"
+              className="flex items-center gap-2 hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-all"
             >
-              <Plus className="w-5 h-5" />
-              Add
-            </button>
+              <LogOut className="w-4 h-4" />
+              Logout
+            </Button>
           </div>
         </div>
+      </motion.nav>
 
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="flex gap-2 mb-4">
-            <button
-              onClick={() => setFilter("all")}
-              className={`px-4 py-2 rounded-lg font-medium transition ${
-                filter === "all"
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
-            >
-              All
-            </button>
-            <button
-              onClick={() => setFilter("active")}
-              className={`px-4 py-2 rounded-lg font-medium transition ${
-                filter === "active"
-                  ? "bg-orange-600 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
-            >
-              Active
-            </button>
-            <button
-              onClick={() => setFilter("done")}
-              className={`px-4 py-2 rounded-lg font-medium transition ${
-                filter === "done"
-                  ? "bg-green-600 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
-            >
-              Done
-            </button>
-          </div>
-
-          {loading ? (
-            <div className="text-center py-8 text-gray-500">
-              Loading todos...
-            </div>
-          ) : filteredTodos.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
-              {filter === "all"
-                ? "No todos yet. Add one above!"
-                : `No ${filter} todos.`}
-            </div>
-          ) : (
-            <div className="space-y-2">
-              {filteredTodos.map((todo) => (
-                <div
-                  key={todo.id}
-                  className={`flex items-center gap-3 p-4 rounded-lg border transition ${
-                    todo.is_done
-                      ? "bg-gray-50 border-gray-200"
-                      : "bg-white border-gray-300"
-                  }`}
-                >
-                  <button
-                    onClick={() => handleToggleDone(todo)}
-                    className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition ${
-                      todo.is_done
-                        ? "bg-green-500 border-green-500"
-                        : "border-gray-300 hover:border-green-500"
-                    }`}
-                  >
-                    {todo.is_done && (
-                      <CheckCircle className="w-4 h-4 text-white" />
-                    )}
-                  </button>
-
-                  {editingId === todo.id ? (
-                    <input
-                      type="text"
-                      value={editTitle}
-                      onChange={(e) => setEditTitle(e.target.value)}
-                      onBlur={() => handleSaveEdit(todo)}
-                      onKeyPress={(e) =>
-                        e.key === "Enter" && handleSaveEdit(todo)
-                      }
-                      className="flex-1 px-2 py-1 border border-blue-500 rounded focus:outline-none"
-                      autoFocus
-                    />
-                  ) : (
-                    <span
-                      className={`flex-1 ${
-                        todo.is_done
-                          ? "line-through text-gray-500"
-                          : "text-gray-800"
-                      }`}
-                    >
-                      {todo.title}
-                    </span>
-                  )}
-
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handleEdit(todo)}
-                      className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded transition"
-                    >
-                      <Edit2 className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(todo.id)}
-                      className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded transition"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+      <div className="max-w-6xl mx-auto p-4 mt-6 space-y-6">
+        {/* Stats Cards */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-4"
+        >
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-blue-600">
+                      Total Tasks
+                    </p>
+                    <p className="text-4xl font-bold text-blue-700">
+                      {stats.total}
+                    </p>
                   </div>
+                  <Target className="w-12 h-12 text-blue-400" />
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-green-600">
+                      Completed
+                    </p>
+                    <p className="text-4xl font-bold text-green-700">
+                      {stats.done}
+                    </p>
+                  </div>
+                  <CheckCircle2 className="w-12 h-12 text-green-400" />
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <Card className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-orange-600">
+                      Active
+                    </p>
+                    <p className="text-4xl font-bold text-orange-700">
+                      {stats.active}
+                    </p>
+                  </div>
+                  <TrendingUp className="w-12 h-12 text-orange-400" />
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </motion.div>
+
+        {/* Add Todo */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+        >
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex gap-2">
+                <Input
+                  type="text"
+                  value={newTodo}
+                  onChange={(e) => setNewTodo(e.target.value)}
+                  onKeyPress={(e) => e.key === "Enter" && handleAddTodo()}
+                  placeholder="What needs to be conquered today?"
+                  className="flex-1 text-lg"
+                />
+                <Button
+                  onClick={handleAddTodo}
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-6"
+                >
+                  <Plus className="w-5 h-5 mr-2" />
+                  Add
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Filters */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex gap-2 flex-wrap">
+                {["all", "active", "done"].map((f) => (
+                  <Button
+                    key={f}
+                    onClick={() => setFilter(f)}
+                    variant={filter === f ? "default" : "outline"}
+                    className={
+                      filter === f
+                        ? "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                        : ""
+                    }
+                  >
+                    {f.charAt(0).toUpperCase() + f.slice(1)}
+                  </Button>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Todos List */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          <Card>
+            <CardContent className="p-6">
+              {loading ? (
+                <div className="text-center py-12 text-gray-500">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{
+                      duration: 1,
+                      repeat: Infinity,
+                      ease: "linear",
+                    }}
+                    className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-4"
+                  />
+                  Loading todos...
+                </div>
+              ) : filteredTodos.length === 0 ? (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="text-center py-12 text-gray-500"
+                >
+                  <Sparkles className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+                  <p className="text-lg font-medium">
+                    {filter === "all"
+                      ? "No todos yet. Time to add one!"
+                      : `No ${filter} todos.`}
+                  </p>
+                </motion.div>
+              ) : (
+                <div className="space-y-3">
+                  <AnimatePresence mode="popLayout">
+                    {filteredTodos.map((todo, index) => (
+                      <motion.div
+                        key={todo.id}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 20 }}
+                        transition={{ delay: index * 0.05 }}
+                        layout
+                      >
+                        <motion.div
+                          whileHover={{ scale: 1.01 }}
+                          className={`flex items-center gap-3 p-4 rounded-lg border-2 transition-all ${
+                            todo.is_done
+                              ? "bg-gray-50 border-gray-200"
+                              : "bg-white border-blue-200 hover:border-blue-300 hover:shadow-md"
+                          }`}
+                        >
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            onClick={() => handleToggleDone(todo)}
+                            className={`flex-shrink-0 w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all ${
+                              todo.is_done
+                                ? "bg-green-500 border-green-500"
+                                : "border-gray-300 hover:border-green-500"
+                            }`}
+                          >
+                            <AnimatePresence>
+                              {todo.is_done && (
+                                <motion.div
+                                  initial={{ scale: 0 }}
+                                  animate={{ scale: 1 }}
+                                  exit={{ scale: 0 }}
+                                >
+                                  <CheckCircle2 className="w-5 h-5 text-white" />
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </motion.button>
+
+                          {editingId === todo.id ? (
+                            <Input
+                              type="text"
+                              value={editTitle}
+                              onChange={(e) => setEditTitle(e.target.value)}
+                              onBlur={() => handleSaveEdit(todo)}
+                              onKeyPress={(e) =>
+                                e.key === "Enter" && handleSaveEdit(todo)
+                              }
+                              className="flex-1"
+                              autoFocus
+                            />
+                          ) : (
+                            <span
+                              className={`flex-1 text-lg ${
+                                todo.is_done
+                                  ? "line-through text-gray-500"
+                                  : "text-gray-800"
+                              }`}
+                            >
+                              {todo.title}
+                            </span>
+                          )}
+
+                          <div className="flex gap-1">
+                            <Button
+                              onClick={() => handleEdit(todo)}
+                              variant="ghost"
+                              size="sm"
+                              className="hover:bg-blue-50 hover:text-blue-600"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              onClick={() => confirmDelete(todo.id)}
+                              variant="ghost"
+                              size="sm"
+                              className="hover:bg-red-50 hover:text-red-600"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </motion.div>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteDialog.open}
+        onOpenChange={(open) => setDeleteDialog({ open, id: null })}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Todo</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this todo? This action cannot be
+              undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setDeleteDialog({ open: false, id: null })}
+            >
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleDelete}>
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
@@ -689,21 +816,66 @@ export default function App() {
         {({ user, loading }) => {
           if (loading) {
             return (
-              <div className="min-h-screen flex items-center justify-center">
-                <div className="text-xl text-gray-600">Loading...</div>
+              <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="text-center"
+                >
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{
+                      duration: 1,
+                      repeat: Infinity,
+                      ease: "linear",
+                    }}
+                    className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-4"
+                  />
+                  <p className="text-xl text-gray-600">
+                    Loading TaskTitan9000...
+                  </p>
+                </motion.div>
               </div>
             );
           }
 
           if (!user) {
-            return page === "login" ? (
-              <LoginPage onSwitchToRegister={() => setPage("register")} />
-            ) : (
-              <RegisterPage onSwitchToLogin={() => setPage("login")} />
+            return (
+              <AnimatePresence mode="wait">
+                {page === "login" ? (
+                  <motion.div
+                    key="login"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <LoginPage onSwitchToRegister={() => setPage("register")} />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="register"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <RegisterPage onSwitchToLogin={() => setPage("login")} />
+                  </motion.div>
+                )}
+              </AnimatePresence>
             );
           }
 
-          return <Dashboard />;
+          return (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Dashboard />
+            </motion.div>
+          );
         }}
       </AuthContext.Consumer>
     </AuthProvider>
